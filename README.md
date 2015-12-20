@@ -1,4 +1,4 @@
-= Blorgh :notebook:
+# Blorgh :notebook:
 
 This project rocks and uses MIT-LICENSE.
 
@@ -47,5 +47,24 @@ end
     ```
     - Anything generated with these commands inside of an engine that has `isolate_namespace` in the Engine class will be namespaced.
 
+### Adding Functionality
 
-
+- Scaffolding an `Article` with `title` and `text` attributes.
+  - **Note here**: the migration is called `create_blorgh_articles` rather than the usual `create_articles`.
+    - This is because of the `isolate_namespace` method called in the `Blorgh::Engine` class's definition.
+    - The model here is also namespaced, being placed at `app/models/blorgh/article.rb` rather than `app/models/article.rb` due to the `isolate_namespace` call within the Engine class.
+  - Routes are drawn upon the `Blorgh::Engine` object rather than the `YourApp::Application` class.
+    - This is so that the engine routes are confined to the engine itself and can be mounted at a specific point.
+    - It also isolates the engine's routes from those routes that are within the application.
+- `rails server` can be run from `test/dummy`
+  - You can check out the functionality at `http://localhost:3000/blorgh/articles`
+- You can also play around in the `rails console`!
+  - Remember: the Article model is namespaced, so to reference it you must call it as `Blorgh::Article`.
+    ```ruby
+    >> Blorgh::Article.find(1)
+    => #<Blorgh::Article id: 1 ...>
+    ```
+- Setting the root of the Engine:
+  - One final thing is that the `articles` resource for this engine should be the root of the engine.
+  - Just insert this line into the 1config/routes.rb1 file inside the engine: `root to: "articles#index"`
+  - Now instead of having to visit `http://localhost:3000/blorgh/articles`, you only need to go to `http://localhost:3000/blorgh` now.
