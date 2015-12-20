@@ -49,7 +49,7 @@ end
 
 ### Adding Functionality
 
-- Scaffolding an `Article` with `title` and `text` attributes.
+- Scaffold a `Article` with `title` and `text` attributes.
   - **Note here**: the migration is called `create_blorgh_articles` rather than the usual `create_articles`.
     - This is because of the `isolate_namespace` method called in the `Blorgh::Engine` class's definition.
     - The model here is also namespaced, being placed at `app/models/blorgh/article.rb` rather than `app/models/article.rb` due to the `isolate_namespace` call within the Engine class.
@@ -68,3 +68,5 @@ end
   - One final thing is that the `articles` resource for this engine should be the root of the engine.
   - Just insert this line into the 1config/routes.rb1 file inside the engine: `root to: "articles#index"`
   - Now instead of having to visit `http://localhost:3000/blorgh/articles`, you only need to go to `http://localhost:3000/blorgh` now.
+- Create a `Comment` model with a reference to an Article (`article_id:integer`)
+  -
