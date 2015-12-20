@@ -11,6 +11,7 @@ module Blorgh
 
     # GET /articles/1
     def show
+      @articles = Article.all
     end
 
     # GET /articles/new
