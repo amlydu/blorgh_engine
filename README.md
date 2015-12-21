@@ -69,4 +69,13 @@ end
   - Just insert this line into the 1config/routes.rb1 file inside the engine: `root to: "articles#index"`
   - Now instead of having to visit `http://localhost:3000/blorgh/articles`, you only need to go to `http://localhost:3000/blorgh` now.
 - Create a `Comment` model with a reference to an Article (`article_id:integer`)
-  -
+  - Remember: this doesn't come along with the associated views or partials - so to render the comment text, remember to create a new file at `app/views/blorgh/comments/_comment.html.erb` and put whatever you want to render from the comments inside of it.
+    - Example of what to put in view: `<%= comment_counter + 1 %>. <%= comment.text %>`
+    - The `comment_counter` local variable is given to us by the `<%= render @article.comments %>` call, which will define it automatically and increment the counter as it iterates through each comment.
+      - It's used in this example to display a small number next to each comment when it's created.
+- NOTE: for Rails 4.1 and above -- apparently using `link_to` with `:delete` will perform an `HTTP GET` request
+  - Had to use `button_to` to get `delete` working properly
+  - Stackoverflow Answer: [Answer surrounding link_to and button_to delete method mystery for Rails 4.1 and above](http://stackoverflow.com/questions/18154916/rails-4-link-to-destroy-not-working-in-getting-started-tutorial)
+    - Mention requiring certain JS gems in `application.js`
+    - :question: Is this really JS related?
+
