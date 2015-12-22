@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Blorgh::VERSION
   s.authors     = ["Amy Dusek"]
   s.email       = ["amlydu@umich.edu"]
-  s.homepage    = "TODO"
+  s.homepage    = ""
   s.summary     = "Helps you Blorgh."
   s.description = "Making things Blorghable since 1999."
   s.license     = "MIT"
