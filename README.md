@@ -79,3 +79,65 @@ end
     - Mention requiring certain JS gems in `application.js`
     - :question: Is this really JS related?
 
+### Hooking into an Application
+
+-  This walk-through goes over how to:
+  - Mount the engine into an application and the initial setup required
+  - Linking the engine to a User class provided by the application to provide ownership for articles and comments within the engine.
+
+1. **Mounting the Engine**
+  - Since we're developing the `blorgh` engine on our local machine, you will need to specify the :path option in your Gemfile:
+    - `gem 'blorgh', path: "/path/to/blorgh"`
+    - What's happening when you place the gem in the Gemfile?
+      - It will be loaded when Rails is loaded.
+      - It will first require `lib/blorgh.rb` from the engine, then `lib/blorgh/engine.rb`, which is the file that defines the major pieces of functionality for the engine.
+  - To make the engine's functionality accessible from within an application, it needs to be mounted in that application's `config/routes.rb` file:
+    - `mount Blorgh::Engine, at: "/blog"`
+    ```
+    rake routes
+    Prefix Verb URI Pattern Controller#Action
+    blorgh      /blog       Blorgh::Engine
+
+    Routes for Blorgh::Engine:
+        article_comments GET    /articles/:article_id/comments(.:format)          blorgh/comments#index
+                         POST   /articles/:article_id/comments(.:format)          blorgh/comments#create
+     new_article_comment  GET    /articles/:article_id/comments/new(.:format)      blorgh/comments#new
+    edit_article_comment GET    /articles/:article_id/comments/:id/edit(.:format) blorgh/comments#edit
+         article_comment GET    /articles/:article_id/comments/:id(.:format)      blorgh/comments#show
+                         PATCH  /articles/:article_id/comments/:id(.:format)      blorgh/comments#update
+                         PUT    /articles/:article_id/comments/:id(.:format)      blorgh/comments#update
+                         DELETE /articles/:article_id/comments/:id(.:format)      blorgh/comments#destroy
+                articles GET    /articles(.:format)                               blorgh/articles#index
+                         POST   /articles(.:format)                               blorgh/articles#create
+             new_article GET    /articles/new(.:format)                           blorgh/articles#new
+            edit_article GET    /articles/:id/edit(.:format)                      blorgh/articles#edit
+                 article GET    /articles/:id(.:format)                           blorgh/articles#show
+                         PATCH  /articles/:id(.:format)                           blorgh/articles#update
+                         PUT    /articles/:id(.:format)                           blorgh/articles#update
+                         DELETE /articles/:id(.:format)                           blorgh/articles#destroy
+                    root GET    /                                                 blorgh/articles#index
+    ```
+      - This line will mount the engine at `/blog` in the application. Making it accessible at `http://localhost:3000/blog` when the application runs with rails server.
+        - NOTE: Other engines, such as Devise, handle this a little differently by making you specify custom helpers (such as `devise_for`) in the routes. These helpers do exactly the same thing, mounting pieces of the engines's functionality at a pre-defined path which may be customizable.
+2. **Engine setup**
+  - Your engine contains migrations for the `blorgh_articles` and `blorgh_comments` table which need to be created in the application's database so that the engine's models can query them correctly. **To copy these migrations into the application use this command**:
+    - `$ rake blorgh:install:migrations`
+      - For multiple engines that need migrations copied over, use `railties:install:migrations` instead:
+        - `$ rake railties:install:migrations`
+      - This command, when run for the first time, will copy over all the migrations from the engine. When run the next time, it will only copy over migrations that haven't been copied over already.
+      ```
+      # Expected output (something similar to this)
+
+      [master]$ rake blorgh:install:migrations
+      Copied migration 20151222034257_create_blorgh_articles.blorgh.rb from blorgh
+      Copied migration 20151222034258_create_blorgh_comments.blorgh.rb from blorgh
+      ```
+      - Running migrations within the context of the application: run `rake db:migrate`
+    - *Reverting Engine Migrations*
+      - Running migrations only from one engine, specify a SCOPE: `rake db:migrate SCOPE=blorgh`
+        - Reverts the engine's migrations before removing it.
+      - To revert all migrations from blorgh engine you can run code such as: `rake db:migrate SCOPE=blorgh VERSION=0`
+
+
+
+
