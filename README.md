@@ -137,7 +137,14 @@ end
       - Running migrations only from one engine, specify a SCOPE: `rake db:migrate SCOPE=blorgh`
         - Reverts the engine's migrations before removing it.
       - To revert all migrations from blorgh engine you can run code such as: `rake db:migrate SCOPE=blorgh VERSION=0`
-
+3. **Using a Class Provided by the Application**
+ - Using a Model Provided by the Application
+  - When you create an engine, you may want to use specific classes from an application to provide links between the pieces of the engine and the pieces of the application.
+    - Ex) For the `blorgh` engine, making articles and comments have authors would make a lot of sense.
+  - A typical application might have a User class that would be used to represent authors for an article or a comment. But an application could call this User something different (such as Person). Because of this, the engine should not hardcode associations specifically for a User class.
+  - The application would generate a User
+    - `rails g model user name:string`
+    - `rake db:migrate` for the User table
 
 
 
